@@ -1,0 +1,24 @@
+# Binaries
+andtls
+andtls.exe
+bin/
+
+# Go
+vendor/
+
+# Screenshots
+screenshots/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
