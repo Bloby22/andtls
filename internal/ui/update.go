@@ -12,6 +12,7 @@ import (
 // Update handles incoming UI messages, key events, and asynchronous command responses
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmds []tea.Cmd
+	l := m.locale
 
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
@@ -32,7 +33,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 
 		case ViewModeActions:
-			actions := components.DefaultActions()
+			actions := components.DefaultActions(l)
 			switch keyStr {
 			case "esc", "q":
 				m.viewMode = ViewModeNormal
@@ -102,7 +103,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 
 			case "r":
-				m.statusMsg = "Refreshing devices..."
+				m.statusMsg = l.MsgRefreshing
 				m.isErr = false
 				cmds = append(cmds, fetchDevicesCmd(m.adbClient))
 
@@ -114,27 +115,27 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					m.viewMode = ViewModeActions
 					m.selectedActionIndex = 0
 				} else if sel != nil {
-					m.statusMsg = "Device must be authorized to perform actions"
+					m.statusMsg = l.MsgUnauthorizedAction
 					m.isErr = true
 				}
 
 			case "s":
 				if sel := m.SelectedDevice(); sel != nil && sel.IsAuthorized() {
-					m.statusMsg = fmt.Sprintf("Capturing screenshot for %s...", sel.DisplayName())
+					m.statusMsg = fmt.Sprintf(l.MsgCapturingScreenshot, sel.DisplayName())
 					m.isErr = false
 					cmds = append(cmds, takeScreenshotCmd(m.adbClient, sel.Serial))
 				} else {
-					m.statusMsg = "Cannot capture screenshot: device not authorized"
+					m.statusMsg = l.MsgCannotScreenshot
 					m.isErr = true
 				}
 
 			case "w":
 				if sel := m.SelectedDevice(); sel != nil && sel.IsAuthorized() {
-					m.statusMsg = fmt.Sprintf("Enabling wireless ADB on port 5555 for %s...", sel.DisplayName())
+					m.statusMsg = fmt.Sprintf(l.MsgEnablingWireless, sel.DisplayName())
 					m.isErr = false
 					cmds = append(cmds, enableWirelessADBCmd(m.adbClient, sel.Serial, sel.IPAddress))
 				} else {
-					m.statusMsg = "Cannot enable wireless ADB: device not authorized"
+					m.statusMsg = l.MsgCannotWireless
 					m.isErr = true
 				}
 
@@ -161,7 +162,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		if msg.Err != nil {
 			m.isErr = true
-			m.statusMsg = fmt.Sprintf("ADB Error: %v", msg.Err)
+			m.statusMsg = fmt.Sprintf(l.MsgADBError, msg.Err)
 			return m, tea.Batch(cmds...)
 		}
 
@@ -179,11 +180,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if len(m.lastEvents) > 10 {
 				m.lastEvents = m.lastEvents[len(m.lastEvents)-10:]
 			}
-		} else if m.statusMsg == "" || m.statusMsg == "Monitoring devices..." || m.statusMsg == "Refreshing devices..." {
+		} else if m.statusMsg == "" || m.statusMsg == l.MsgMonitoringNone || m.statusMsg == l.MsgRefreshing {
 			if len(msg.Devices) == 0 {
-				m.statusMsg = "Monitoring devices (1s polling)... No devices connected"
+				m.statusMsg = l.MsgMonitoringNone
 			} else {
-				m.statusMsg = fmt.Sprintf("Monitoring devices (1s polling)... Found %d device(s)", len(msg.Devices))
+				m.statusMsg = fmt.Sprintf(l.MsgMonitoringFound, len(msg.Devices))
 			}
 		}
 
@@ -262,29 +263,31 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 // executeAction dispatches the corresponding command for an action ID
 func (m Model) executeAction(actionID string, dev *device.Device) (tea.Model, tea.Cmd) {
+	l := m.locale
+
 	switch actionID {
 	case "screenshot":
-		m.statusMsg = fmt.Sprintf("Capturing screenshot for %s...", dev.DisplayName())
+		m.statusMsg = fmt.Sprintf(l.MsgCapturingScreenshot, dev.DisplayName())
 		m.isErr = false
 		return m, takeScreenshotCmd(m.adbClient, dev.Serial)
 
 	case "wireless":
-		m.statusMsg = fmt.Sprintf("Enabling wireless ADB on port 5555 for %s...", dev.DisplayName())
+		m.statusMsg = fmt.Sprintf(l.MsgEnablingWireless, dev.DisplayName())
 		m.isErr = false
 		return m, enableWirelessADBCmd(m.adbClient, dev.Serial, dev.IPAddress)
 
 	case "reboot_system":
-		m.statusMsg = fmt.Sprintf("Rebooting %s...", dev.DisplayName())
+		m.statusMsg = fmt.Sprintf(l.MsgRebooting, dev.DisplayName())
 		m.isErr = false
 		return m, rebootDeviceCmd(m.adbClient, dev.Serial, "")
 
 	case "reboot_recovery":
-		m.statusMsg = fmt.Sprintf("Rebooting %s to Recovery...", dev.DisplayName())
+		m.statusMsg = fmt.Sprintf(l.MsgRebootingRecovery, dev.DisplayName())
 		m.isErr = false
 		return m, rebootDeviceCmd(m.adbClient, dev.Serial, "recovery")
 
 	case "reboot_bootloader":
-		m.statusMsg = fmt.Sprintf("Rebooting %s to Bootloader...", dev.DisplayName())
+		m.statusMsg = fmt.Sprintf(l.MsgRebootingBootloader, dev.DisplayName())
 		m.isErr = false
 		return m, rebootDeviceCmd(m.adbClient, dev.Serial, "bootloader")
 	}

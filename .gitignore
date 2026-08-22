@@ -3,6 +3,9 @@ andtls
 andtls.exe
 bin/
 
+# Packaging
+deb/
+
 # Go
 vendor/
 

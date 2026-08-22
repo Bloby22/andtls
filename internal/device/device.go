@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 	"time"
+
+	"github.com/Bloby22/andtls/internal/locale"
 )
 
 // DeviceState represents the operational state of an Android device according to ADB
@@ -128,21 +130,22 @@ func (d Device) DisplayName() string {
 
 // DisplayState returns a formatted string representation of the device state
 func (d Device) DisplayState() string {
+	l := locale.Get()
 	switch d.State {
 	case StateDevice:
-		return "Connected"
+		return l.StateConnected
 	case StateUnauthorized:
-		return "Unauthorized"
+		return l.StateUnauthorized
 	case StateOffline:
-		return "Offline"
+		return l.StateOffline
 	case StateAuthorizing:
-		return "Authorizing..."
+		return l.StateAuthorizing
 	case StateRecovery:
-		return "Recovery"
+		return l.StateRecovery
 	case StateSideload:
-		return "Sideload"
+		return l.StateSideload
 	case StateBootloader:
-		return "Bootloader"
+		return l.StateBootloader
 	default:
 		return string(d.State)
 	}

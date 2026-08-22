@@ -5,23 +5,24 @@ import (
 	"strings"
 
 	"github.com/Bloby22/andtls/internal/device"
+	"github.com/Bloby22/andtls/internal/locale"
 	"github.com/Bloby22/andtls/internal/ui/styles"
 )
 
 // RenderDetailsCard renders an inspection card with detailed properties of the selected device
-func RenderDetailsCard(dev *device.Device) string {
+func RenderDetailsCard(dev *device.Device, l *locale.Strings) string {
 	if dev == nil {
 		return ""
 	}
 
 	var details []string
-	details = append(details, styles.DetailTitleStyle.Render("🔍 Device Inspector"))
+	details = append(details, styles.DetailTitleStyle.Render(l.DetailTitle))
 
 	// Row 1: Serial & Status
 	row1 := fmt.Sprintf(
 		"%s %s    %s %s",
-		styles.DetailKeyStyle.Render("Serial Number:"), styles.DetailValueStyle.Render(dev.Serial),
-		styles.DetailKeyStyle.Render("ADB Status:"), styles.RenderStatusBadge(dev.State),
+		styles.DetailKeyStyle.Render(l.DetailSerialNumber), styles.DetailValueStyle.Render(dev.Serial),
+		styles.DetailKeyStyle.Render(l.DetailADBStatus), styles.RenderStatusBadge(dev.State, l),
 	)
 	details = append(details, row1)
 
@@ -36,8 +37,8 @@ func RenderDetailsCard(dev *device.Device) string {
 	}
 	row2 := fmt.Sprintf(
 		"%s %s    %s %s",
-		styles.DetailKeyStyle.Render("Model Name:"), styles.DetailValueStyle.Render(modelVal),
-		styles.DetailKeyStyle.Render("Codename / Product:"), styles.DetailValueStyle.Render(prodVal),
+		styles.DetailKeyStyle.Render(l.DetailModelName), styles.DetailValueStyle.Render(modelVal),
+		styles.DetailKeyStyle.Render(l.DetailCodename), styles.DetailValueStyle.Render(prodVal),
 	)
 	details = append(details, row2)
 
@@ -49,8 +50,8 @@ func RenderDetailsCard(dev *device.Device) string {
 	}
 	row3 := fmt.Sprintf(
 		"%s %s    %s %s",
-		styles.DetailKeyStyle.Render("Android OS:"), styles.DetailValueStyle.Render(osVal),
-		styles.DetailKeyStyle.Render("IP Address:"), styles.DetailValueStyle.Render(ipVal),
+		styles.DetailKeyStyle.Render(l.DetailAndroidOS), styles.DetailValueStyle.Render(osVal),
+		styles.DetailKeyStyle.Render(l.DetailIPAddress), styles.DetailValueStyle.Render(ipVal),
 	)
 	details = append(details, row3)
 
@@ -59,8 +60,8 @@ func RenderDetailsCard(dev *device.Device) string {
 	storageVal := dev.StorageString()
 	row4 := fmt.Sprintf(
 		"%s %s    %s %s",
-		styles.DetailKeyStyle.Render("Battery Telemetry:"), styles.DetailValueStyle.Render(batVal),
-		styles.DetailKeyStyle.Render("Storage Space:"), styles.DetailValueStyle.Render(storageVal),
+		styles.DetailKeyStyle.Render(l.DetailBattery), styles.DetailValueStyle.Render(batVal),
+		styles.DetailKeyStyle.Render(l.DetailStorage), styles.DetailValueStyle.Render(storageVal),
 	)
 	details = append(details, row4)
 
@@ -75,8 +76,8 @@ func RenderDetailsCard(dev *device.Device) string {
 	}
 	row5 := fmt.Sprintf(
 		"%s %s    %s %s",
-		styles.DetailKeyStyle.Render("USB Bus / Port:"), styles.DetailValueStyle.Render(portVal),
-		styles.DetailKeyStyle.Render("Display Resolution:"), styles.DetailValueStyle.Render(screenVal),
+		styles.DetailKeyStyle.Render(l.DetailUSBPort), styles.DetailValueStyle.Render(portVal),
+		styles.DetailKeyStyle.Render(l.DetailResolution), styles.DetailValueStyle.Render(screenVal),
 	)
 	details = append(details, row5)
 

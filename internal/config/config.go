@@ -14,6 +14,9 @@ type Config struct {
 
 	// PollInterval is the duration between automatic device list refreshes
 	PollInterval time.Duration
+
+	// Language is the UI locale code (e.g. "en", "cs"). Empty means auto-detect.
+	Language string
 }
 
 // DefaultConfig returns the standard default configuration
@@ -22,5 +25,6 @@ func DefaultConfig() Config {
 		ADBPath:        "adb",
 		CommandTimeout: 5 * time.Second,
 		PollInterval:   1 * time.Second,
+		Language:       "",
 	}
 }

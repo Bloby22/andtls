@@ -4,30 +4,31 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/Bloby22/andtls/internal/locale"
 	"github.com/Bloby22/andtls/internal/ui/styles"
 )
 
 // RenderHelpModal renders a floating dialog box with the complete keyboard shortcut map
-func RenderHelpModal() string {
+func RenderHelpModal(l *locale.Strings) string {
 	var lines []string
 
-	lines = append(lines, styles.ModalTitleStyle.Render("📖 andtls Keyboard Shortcuts & Help"))
+	lines = append(lines, styles.ModalTitleStyle.Render(l.HelpTitle))
 	lines = append(lines, "")
 
 	shortcuts := []struct {
 		Key  string
 		Desc string
 	}{
-		{"↑ / k", "Move selection cursor up"},
-		{"↓ / j", "Move selection cursor down"},
-		{"r", "Trigger immediate device poll and refresh"},
-		{"s", "Take screenshot of selected device (saved to ./screenshots/)"},
-		{"w", "Enable wireless ADB mode on port 5555 for selected device"},
-		{"b", "Open reboot options menu (System, Recovery, Bootloader)"},
-		{"Enter", "Open quick actions menu for selected device"},
-		{"? / h", "Toggle this help dialog overlay"},
-		{"Esc", "Close any active modal overlay"},
-		{"q / Ctrl+C", "Quit application"},
+		{"↑ / k", l.HelpMoveUp},
+		{"↓ / j", l.HelpMoveDown},
+		{"r", l.HelpRefresh},
+		{"s", l.HelpScreenshot},
+		{"w", l.HelpWirelessADB},
+		{"b", l.HelpRebootMenu},
+		{"Enter", l.HelpActionsMenu},
+		{"? / h", l.HelpToggleHelp},
+		{"Esc", l.HelpCloseModal},
+		{"q / Ctrl+C", l.HelpQuit},
 	}
 
 	for _, s := range shortcuts {
@@ -36,7 +37,7 @@ func RenderHelpModal() string {
 	}
 
 	lines = append(lines, "")
-	lines = append(lines, styles.HelpDescStyle.Render("Press [Esc] or [?] to close this help window"))
+	lines = append(lines, styles.HelpDescStyle.Render(l.HelpCloseHint))
 
 	return styles.ModalBoxStyle.Render(strings.Join(lines, "\n"))
 }

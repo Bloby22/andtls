@@ -1,0 +1,12 @@
+# Default owner for everything
+* @Bloby22
+
+# Core application
+/cmd/ @Bloby22
+/internal/ @Bloby22
+
+# Scripts
+/scripts/ @Bloby22
+
+# Packaging
+/deb/ @Bloby22

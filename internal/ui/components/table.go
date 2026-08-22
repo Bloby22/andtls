@@ -5,17 +5,18 @@ import (
 	"strings"
 
 	"github.com/Bloby22/andtls/internal/device"
+	"github.com/Bloby22/andtls/internal/locale"
 	"github.com/Bloby22/andtls/internal/ui/styles"
 )
 
 // RenderTable renders the interactive device list table with highlighting for the active selection
-func RenderTable(devices []device.Device, selectedIndex int) string {
+func RenderTable(devices []device.Device, selectedIndex int, l *locale.Strings) string {
 	var tableRows []string
 
 	// Table column header line
 	headerCols := fmt.Sprintf(
 		"  %-18s  %-22s  %-24s  %-20s  %-8s",
-		"STATUS", "SERIAL NUMBER", "MODEL / NAME", "BATTERY", "TR-ID",
+		l.TableStatus, l.TableSerial, l.TableModel, l.TableBattery, l.TableTransport,
 	)
 	tableRows = append(tableRows, styles.TableHeaderStyle.Render(headerCols))
 
@@ -26,7 +27,7 @@ func RenderTable(devices []device.Device, selectedIndex int) string {
 			cursor = styles.CursorStyle.Render("▸ ")
 		}
 
-		statusBadge := styles.RenderStatusBadge(dev.State)
+		statusBadge := styles.RenderStatusBadge(dev.State, l)
 		serial := dev.Serial
 		if len(serial) > 20 {
 			serial = serial[:17] + "..."
@@ -37,7 +38,7 @@ func RenderTable(devices []device.Device, selectedIndex int) string {
 			modelName = modelName[:19] + "..."
 		}
 
-		batteryBadge := styles.RenderBatteryBadge(dev.Battery, dev.BatteryStatus)
+		batteryBadge := styles.RenderBatteryBadge(dev.Battery, dev.BatteryStatus, l)
 		trID := dev.TransportID
 		if trID == "" {
 			trID = "—"

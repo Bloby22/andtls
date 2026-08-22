@@ -1,0 +1,127 @@
+# andtls — Table of Contents
+
+## Root
+
+| File | Description |
+|------|-------------|
+| `main.go` | Application entry point |
+| `go.mod` / `go.sum` | Go module definition and checksums |
+| `Makefile` | Build, install, run, and clean targets |
+| `build.sh` | Shell-based build script |
+| `install.sh` | System PATH installer (~/.local/bin or /usr/local/bin) |
+| `README.md` | Project overview, features, and usage |
+| `LICENSE` | MIT license |
+| `.gitignore` | Git ignore rules |
+| `CODEOWNERS` | GitHub code ownership |
+
+---
+
+## cmd/
+
+| Path | Description |
+|------|-------------|
+| `cmd/andtls/main.go` | CLI entry point for the `andtls` binary |
+
+---
+
+## internal/
+
+### internal/adb/
+
+| File | Description |
+|------|-------------|
+| `internal/adb/client.go` | ADB command execution and device communication |
+| `internal/adb/parser.go` | Output parsing for ADB commands (devices, battery, storage, IP) |
+
+### internal/app/
+
+| File | Description |
+|------|-------------|
+| `internal/app/app.go` | Application orchestration and lifecycle |
+
+### internal/config/
+
+| File | Description |
+|------|-------------|
+| `internal/config/config.go` | Configuration management (ADB path, polling, language) |
+
+### internal/device/
+
+| File | Description |
+|------|-------------|
+| `internal/device/device.go` | Device model, data structures, and display helpers |
+| `internal/device/watcher.go` | Real-time USB device polling and hot-plug detection |
+
+### internal/locale/
+
+| File | Description |
+|------|-------------|
+| `internal/locale/locale.go` | i18n translation maps (en, cs), locale detection, `Set()`/`Get()` API |
+
+### internal/ui/
+
+| File | Description |
+|------|-------------|
+| `internal/ui/model.go` | Bubble Tea model definition |
+| `internal/ui/msg.go` | Message types for TUI event handling |
+| `internal/ui/update.go` | Update logic for keyboard input and state transitions |
+| `internal/ui/view.go` | View rendering |
+
+#### internal/ui/components/
+
+| File | Description |
+|------|-------------|
+| `internal/ui/components/actions.go` | Device action handlers (screenshot, wireless ADB, reboot) |
+| `internal/ui/components/details.go` | Deep device inspector panel |
+| `internal/ui/components/empty.go` | Empty state and troubleshooting guidance |
+| `internal/ui/components/header.go` | Application header bar |
+| `internal/ui/components/help.go` | Interactive help modal with keybindings |
+| `internal/ui/components/statusbar.go` | Status bar rendering |
+| `internal/ui/components/table.go` | Device table component |
+
+#### internal/ui/styles/
+
+| File | Description |
+|------|-------------|
+| `internal/ui/styles/colors.go` | Color palette definitions |
+| `internal/ui/styles/theme.go` | Lip Gloss theme, status/battery badge renderers |
+
+---
+
+## scripts/
+
+| File | Description |
+|------|-------------|
+| `scripts/check_devices.sh` | Quick device connectivity check |
+| `scripts/dev.sh` | Development helper script |
+| `scripts/log_parser.pl` | Log file parser |
+| `scripts/metrics_collector.pl` | Device metrics collection |
+| `scripts/release.sh` | Release packaging script |
+| `scripts/udev_generator.pl` | udev rule generator for USB devices |
+
+---
+
+## deb/ (gitignored)
+
+| Path | Description |
+|------|-------------|
+| `deb/DEBIAN/control` | Debian package metadata |
+
+---
+
+## docs/
+
+| File | Description |
+|------|-------------|
+| `docs/TO` | This table of contents |
+| `docs/CODE_OF_CONDUCT.md` | Contributor Covenant Code of Conduct |
+| `docs/SECURITY.md` | Security vulnerability reporting policy |
+| `docs/CONTRIBUTING.md` | Contribution guidelines and development setup |
+| `docs/CHANGELOG.md` | Project changelog |
+| `docs/SUPPORT.md` | Help, troubleshooting, and community links |
+
+---
+
+## bin/
+
+Build output directory (generated, gitignored).

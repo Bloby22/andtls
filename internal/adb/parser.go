@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/Bloby22/andtls/internal/device"
+	"github.com/Bloby22/andtls/internal/locale"
 )
 
 // BatteryInfo holds structured battery telemetry data
@@ -104,7 +105,7 @@ func ParseBatteryOutput(rawOutput string) (int, string, error) {
 func ParseBatteryInfo(rawOutput string) (BatteryInfo, error) {
 	info := BatteryInfo{
 		Level:  -1,
-		Status: "Unknown",
+		Status: locale.Get().BatteryUnknown,
 	}
 
 	lines := strings.Split(rawOutput, "\n")
@@ -126,17 +127,18 @@ func ParseBatteryInfo(rawOutput string) (BatteryInfo, error) {
 				// 3: BATTERY_STATUS_DISCHARGING
 				// 4: BATTERY_STATUS_NOT_CHARGING
 				// 5: BATTERY_STATUS_FULL
+				l := locale.Get()
 				switch parts[1] {
 				case "2":
-					info.Status = "Charging"
+					info.Status = l.BatteryCharging
 				case "3":
-					info.Status = "Discharging"
+					info.Status = l.BatteryDischarging
 				case "4":
-					info.Status = "Not charging"
+					info.Status = l.BatteryNotCharging
 				case "5":
-					info.Status = "Full"
+					info.Status = l.BatteryFull
 				default:
-					info.Status = "Unknown"
+					info.Status = l.BatteryUnknown
 				}
 			}
 		} else if strings.HasPrefix(line, "temperature:") {

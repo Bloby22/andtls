@@ -7,6 +7,7 @@ import (
 
 	"github.com/Bloby22/andtls/internal/adb"
 	"github.com/Bloby22/andtls/internal/device"
+	"github.com/Bloby22/andtls/internal/locale"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
@@ -126,17 +127,18 @@ func takeScreenshotCmd(client *adb.Client, serial string) tea.Cmd {
 		ctx, cancel := context.WithTimeout(context.Background(), 8*time.Second)
 		defer cancel()
 
+		l := locale.Get()
 		filePath, err := client.TakeScreenshot(ctx, serial, "screenshots")
 		if err != nil {
 			return ActionResultMsg{
 				Success: false,
-				Message: fmt.Sprintf("Screenshot failed: %v", err),
+				Message: fmt.Sprintf(l.MsgScreenshotFailed, err),
 			}
 		}
 
 		return ActionResultMsg{
 			Success: true,
-			Message: fmt.Sprintf("Screenshot saved to: %s", filePath),
+			Message: fmt.Sprintf(l.MsgScreenshotSaved, filePath),
 		}
 	}
 }
@@ -147,10 +149,11 @@ func enableWirelessADBCmd(client *adb.Client, serial string, ip string) tea.Cmd 
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
 
+		l := locale.Get()
 		if err := client.EnableWirelessADB(ctx, serial, 5555); err != nil {
 			return ActionResultMsg{
 				Success: false,
-				Message: fmt.Sprintf("Wireless ADB failed: %v", err),
+				Message: fmt.Sprintf(l.MsgWirelessFailed, err),
 			}
 		}
 
@@ -160,7 +163,7 @@ func enableWirelessADBCmd(client *adb.Client, serial string, ip string) tea.Cmd 
 
 		return ActionResultMsg{
 			Success: true,
-			Message: fmt.Sprintf("Wireless ADB enabled on port 5555 (Connect with: adb connect %s:5555)", ip),
+			Message: fmt.Sprintf(l.MsgWirelessEnabled, ip),
 		}
 	}
 }
@@ -171,20 +174,30 @@ func rebootDeviceCmd(client *adb.Client, serial, mode string) tea.Cmd {
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
 
+		l := locale.Get()
 		if err := client.Reboot(ctx, serial, mode); err != nil {
 			return ActionResultMsg{
 				Success: false,
-				Message: fmt.Sprintf("Reboot failed: %v", err),
+				Message: fmt.Sprintf(l.MsgRebootFailed, err),
 			}
 		}
 
-		modeName := mode
-		if modeName == "" {
-			modeName = "system"
-		}
-		return ActionResultMsg{
-			Success: true,
-			Message: fmt.Sprintf("Device %s rebooting to %s...", serial, modeName),
+		switch mode {
+		case "recovery":
+			return ActionResultMsg{
+				Success: true,
+				Message: fmt.Sprintf(l.MsgRebootToRecovery, serial),
+			}
+		case "bootloader":
+			return ActionResultMsg{
+				Success: true,
+				Message: fmt.Sprintf(l.MsgRebootToBootloader, serial),
+			}
+		default:
+			return ActionResultMsg{
+				Success: true,
+				Message: fmt.Sprintf(l.MsgRebootToSystem, serial),
+			}
 		}
 	}
 }

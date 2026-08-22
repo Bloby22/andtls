@@ -2,8 +2,10 @@ package styles
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/Bloby22/andtls/internal/device"
+	"github.com/Bloby22/andtls/internal/locale"
 	"github.com/charmbracelet/lipgloss"
 )
 
@@ -157,29 +159,42 @@ var ModalTitleStyle = lipgloss.NewStyle().
 	MarginBottom(1)
 
 // RenderStatusBadge formats and styles the device state indicator badge
-func RenderStatusBadge(state device.DeviceState) string {
+func RenderStatusBadge(state device.DeviceState, l *locale.Strings) string {
+	var label string
 	switch state {
 	case device.StateDevice:
-		return StatusDeviceStyle.Render("● CONNECTED")
+		label = l.StateConnected
 	case device.StateUnauthorized:
-		return StatusUnauthorizedStyle.Render("● UNAUTHORIZED")
+		label = l.StateUnauthorized
 	case device.StateOffline:
-		return StatusOfflineStyle.Render("● OFFLINE")
+		label = l.StateOffline
 	case device.StateAuthorizing:
-		return StatusUnauthorizedStyle.Render("● AUTHORIZING...")
+		label = l.StateAuthorizing
 	case device.StateRecovery:
-		return StatusOtherStyle.Render("● RECOVERY")
+		label = l.StateRecovery
 	case device.StateSideload:
-		return StatusOtherStyle.Render("● SIDELOAD")
+		label = l.StateSideload
 	case device.StateBootloader:
-		return StatusOtherStyle.Render("● BOOTLOADER")
+		label = l.StateBootloader
 	default:
-		return StatusOtherStyle.Render("● " + string(state))
+		label = string(state)
+	}
+	upper := strings.ToUpper(label)
+
+	switch state {
+	case device.StateDevice:
+		return StatusDeviceStyle.Render("● " + upper)
+	case device.StateUnauthorized, device.StateAuthorizing:
+		return StatusUnauthorizedStyle.Render("● " + upper)
+	case device.StateOffline:
+		return StatusOfflineStyle.Render("● " + upper)
+	default:
+		return StatusOtherStyle.Render("● " + upper)
 	}
 }
 
 // RenderBatteryBadge formats and colors the battery percentage and charging indicator
-func RenderBatteryBadge(battery int, status string) string {
+func RenderBatteryBadge(battery int, status string, l *locale.Strings) string {
 	if battery < 0 {
 		return lipgloss.NewStyle().Foreground(ColorMuted).Render("—")
 	}
@@ -195,11 +210,11 @@ func RenderBatteryBadge(battery int, status string) string {
 
 	style := lipgloss.NewStyle().Foreground(color).Bold(true)
 	icon := "🔋"
-	if status == "Charging" || status == "Nabíjí se" {
+	if status == l.BatteryCharging {
 		icon = "⚡"
 	}
 
-	if status != "" && status != "Unknown" {
+	if status != "" && status != l.BatteryUnknown {
 		return style.Render(fmt.Sprintf("%s %d%% (%s)", icon, battery, status))
 	}
 	return style.Render(fmt.Sprintf("%s %d%%", icon, battery))

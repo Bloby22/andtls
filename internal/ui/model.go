@@ -5,6 +5,7 @@ import (
 
 	"github.com/Bloby22/andtls/internal/adb"
 	"github.com/Bloby22/andtls/internal/device"
+	"github.com/Bloby22/andtls/internal/locale"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
@@ -37,6 +38,7 @@ type Model struct {
 	lastEvents          []string
 	viewMode            ViewMode
 	selectedActionIndex int
+	locale              *locale.Strings
 }
 
 // NewModel initializes and returns a new Model instance
@@ -44,6 +46,7 @@ func NewModel(client *adb.Client, pollInterval time.Duration) Model {
 	if pollInterval <= 0 {
 		pollInterval = 1 * time.Second
 	}
+	locale.Detect()
 	return Model{
 		adbClient:           client,
 		devices:             []device.Device{},
@@ -55,6 +58,7 @@ func NewModel(client *adb.Client, pollInterval time.Duration) Model {
 		lastEvents:          make([]string, 0),
 		viewMode:            ViewModeNormal,
 		selectedActionIndex: 0,
+		locale:              locale.Get(),
 	}
 }
 
