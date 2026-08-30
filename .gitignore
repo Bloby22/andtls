@@ -2,8 +2,6 @@
 andtls
 andtls.exe
 bin/
-PKGBUILD
-arch/
 
 # Packaging
 deb/
