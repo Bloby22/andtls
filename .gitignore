@@ -1,0 +1,32 @@
+# Binaries
+andtls
+andtls.exe
+bin/
+PKGBUILD
+arch/
+
+# Packaging
+deb/
+
+# Go
+vendor/
+
+# Output folders
+screenshots/
+recordings/
+downloads/
+reports/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
